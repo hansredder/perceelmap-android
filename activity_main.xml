@@ -1,0 +1,74 @@
+
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
+
+android {
+    namespace = "nl.perceelmap"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "nl.perceelmap"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+        ndk { abiFilters += listOf("arm64-v8a") }
+    }
+
+    // Produce per-ABI APK, only arm64-v8a
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a")
+            isUniversalApk = false
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            // debug signing by default (installable)
+        }
+    }
+    buildFeatures { viewBinding = true }
+    packaging {
+        resources.excludes += setOf(
+            "META-INF/DEPENDENCIES",
+            "META-INF/README.*",
+            "META-INF/CHANGES.*"
+        )
+    }
+}
+
+dependencies {
+    // MapLibre Native Android
+    implementation("org.maplibre.gl:android-sdk:11.11.0")
+    implementation("org.maplibre.gl:android-sdk-geojson:6.0.1")
+
+    // Retrofit / OkHttp / Moshi
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // Proj4J for CRS transforms
+    implementation("org.locationtech.proj4j:proj4j:1.4.1")
+    implementation("org.locationtech.proj4j:proj4j-epsg:1.4.1")
+
+    // Coroutines (optional)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // AndroidX
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+}
